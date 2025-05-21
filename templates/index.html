@@ -1,24 +1,174 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Self Assessment Tool</title>
+  <meta charset="UTF-8">
+  <title>Health Self-Assessment</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #121212;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .card {
+      background-color: #ffffff;
+      border-radius: 12px;
+      padding: 30px 40px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    select,
+    input[type="number"],
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+    }
+
+    button {
+      margin-top: 25px;
+      padding: 12px;
+      width: 100%;
+      background-color: #007bff;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .result {
+      margin-top: 20px;
+      font-size: 18px;
+      text-align: center;
+      font-weight: bold;
+      color: #444;
+    }
+  </style>
 </head>
 <body>
-    <h2>Health Risk Self-Assessment</h2>
-    <form method="POST" action="/predict">
-        {% for feature in features %}
-            <label>{{ feature.replace("_", " ") }}:</label>
-            <select name="{{ feature }}">
-                <option value="0">No</option>
-                <option value="1">Yes</option>
-            </select><br><br>
-        {% endfor %}
-        <input type="submit" value="Predict">
+  <div class="card">
+    <h2>Health Self-Assessment</h2>
+
+    <form id="assessmentForm">
+      <label>Diet</label>
+      <select name="Diet">
+        <option value="0">Unhealthy</option>
+        <option value="1">Moderate</option>
+        <option value="2">Healthy</option>
+      </select>
+
+      <label>Irregular Heartbeat</label>
+      <select name="irregular heartbeat">
+        <option value="0">No</option>
+        <option value="1">Yes</option>
+      </select>
+
+      <label>Dizziness</label>
+      <select name="Dizziness">
+        <option value="0">No</option>
+        <option value="1">Yes</option>
+      </select>
+
+      <label>Sweating</label>
+      <select name="Sweating">
+        <option value="0">No</option>
+        <option value="1">Yes</option>
+      </select>
+
+      <label>Exercise</label>
+      <select name="Excercise">
+        <option value="0">Never</option>
+        <option value="1">Sometimes</option>
+        <option value="2">Regularly</option>
+      </select>
+
+      <label>Fatigue</label>
+      <select name="Fatigue">
+        <option value="0">No</option>
+        <option value="1">Yes</option>
+      </select>
+
+      <label>Headaches</label>
+      <select name="Headaches">
+        <option value="0">No</option>
+        <option value="1">Yes</option>
+      </select>
+
+      <label>Weight Gain</label>
+      <select name="weight gain">
+        <option value="0">No</option>
+        <option value="1">Yes</option>
+      </select>
+
+      <button type="submit">Get Prediction</button>
     </form>
 
-    {% if prediction is not none %}
-        <h3>Prediction: {{ 'At Risk' if prediction == 1 else 'Not at Risk' }}</h3>
-    {% endif %}
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+  document.getElementById("assessmentForm").addEventListener("submit", async function(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const data = {};
+    formData.forEach((value, key) => data[key] = Number(value));
+
+    const response = await fetch("/predict", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+
+    const resultBox = document.getElementById("result");
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      resultBox.textContent = "Error: " + errorData.error;
+      resultBox.style.color = "red";
+      return;
+    }
+
+    const result = await response.json();
+
+    resultBox.innerHTML = `
+      <div style="color: ${result.color};">
+        <p><strong>Risk:</strong> ${result.risk}</p>
+        <p><strong>Probability:</strong> ${result.probability}%</p>
+        <p>${result.message}</p>
+      </div>
+    `;
+  });
+</script>
+
 </body>
 </html>

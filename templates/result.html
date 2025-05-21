@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Prediction Result</title>
+  <style>
+    body { font-family: Arial; text-align: center; padding: 30px; }
+    .result-box {
+      border: 2px solid #ccc;
+      padding: 20px;
+      border-radius: 10px;
+      display: inline-block;
+    }
+    .probability {
+      font-size: 2em;
+      font-weight: bold;
+    }
+    .risk {
+      font-size: 1.5em;
+      font-weight: bold;
+    }
+    .message {
+      font-size: 1.2em;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Risk Prediction Result</h1>
+  <div class="result-box">
+    <div class="probability" style="color: {{ color }};">Probability: {{ probability }}%</div>
+    <div class="risk" style="color: {{ color }};">{{ risk }}</div>
+    <div class="message">{{ message }}</div>
+  </div>
+</body>
+</html>
