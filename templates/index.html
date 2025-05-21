@@ -1,0 +1,24 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Self Assessment Tool</title>
+</head>
+<body>
+    <h2>Health Risk Self-Assessment</h2>
+    <form method="POST" action="/predict">
+        {% for feature in features %}
+            <label>{{ feature.replace("_", " ") }}:</label>
+            <select name="{{ feature }}">
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+            </select><br><br>
+        {% endfor %}
+        <input type="submit" value="Predict">
+    </form>
+
+    {% if prediction is not none %}
+        <h3>Prediction: {{ 'At Risk' if prediction == 1 else 'Not at Risk' }}</h3>
+    {% endif %}
+</body>
+</html>
